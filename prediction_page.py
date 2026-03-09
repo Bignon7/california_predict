@@ -58,6 +58,6 @@ def show_prediction_page():
 
         prediction = model.predict(data_df_s)
 
-        st.title(f"The estimated price is ${prediction[0]:.2f}")
+        st.success(f"The estimated price is ${prediction[0]:.2f}")
 
 
