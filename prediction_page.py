@@ -1,6 +1,8 @@
 import streamlit as st
 import pandas as pd
 import joblib as jb
+import numpy as np
+
 
 model = jb.load("model/best_forest_model.pkl")
 scaler = jb.load("model/scaler.pkl")
@@ -17,14 +19,14 @@ def show_prediction_page():
     with col1:
         longitude = st.number_input("Longitude", min_value=-125.0, max_value=125.0, value=0.0, step=0.1)
         housing_median_age = st.number_input("Housing Median Age", min_value=0.0, value=0.0, step=0.1)
-        total_rooms = st.number_input("Total rooms", min_value=0, value=0, step=1)
+        total_rooms = st.number_input("Total rooms", min_value=1, value=1, step=1)
         population = st.number_input("Population", min_value=0.0, value=0.0, step=0.1)
         median_income = st.number_input("Median income", min_value=0.0, value=0.0, step=0.1)
 
     with col2:
         latitude = st.number_input("Latitude", min_value=-125.0, max_value=125.0, value=0.0, step=0.1)
-        total_bedrooms = st.number_input("Total bedrooms", min_value=0, value=0, step=1)
-        households = st.number_input("Households", min_value=0.0, value=0.0, step=0.1)
+        total_bedrooms = st.number_input("Total bedrooms", min_value=1, value=1, step=1)
+        households = st.number_input("Households", min_value=1.0, value=1.0, step=0.1)
         ocean_proximity = st.selectbox("Ocean Proximity", choices["ocean_proximity"].unique())
 
 
@@ -45,6 +47,13 @@ def show_prediction_page():
         }
 
         data_df = pd.DataFrame([data])
+
+
+        data_df["total_rooms"] = np.log(data_df["total_rooms"] + 1)
+        data_df["total_bedrooms"] = np.log(data_df["total_bedrooms"] + 1)
+        data_df["population"] = np.log(data_df["population"] + 1)
+        data_df["households"] = np.log(data_df["households"] + 1)
+        
 
         data_df["bedroom_ratio"] = data_df["total_bedrooms"] / data_df["total_rooms"]
         data_df["household_ratio"] = data_df["total_rooms"] / data_df["households"]
